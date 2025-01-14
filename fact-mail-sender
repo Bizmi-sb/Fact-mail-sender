@@ -1,0 +1,26 @@
+import yagmail
+from yagmail.sender import SMTP
+import os
+import time
+from datetime import datetime as dt
+import requests
+import json
+
+sender = "sender@gmail.com"
+receiver = "receiver@gmail.com"
+
+while True :
+  current=dt.now()
+  if current.hour == 21 and current.minute == 10:
+    url = "https://uselessfacts.jsph.pl/random.json?language=en"
+    response = requests.get(url)
+    data = json.loads(response.text)
+    fun_fact = data['text']
+    subject = "Daily Fun Fact"
+    contents = """
+    DID YOU KNOW?\n
+    """ + fun_fact
+    yag = yagmail.SMTP(user=sender,password=os.getenv('password'))
+    yag.send(to=receiver,subject=subject,contents=contents)
+    print("Email Sent")
+    time.sleep(60)
